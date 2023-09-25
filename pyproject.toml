@@ -1,0 +1,33 @@
+[tool.poetry]
+name = "rag-service"
+version = "0.0.1"
+description = "A Retrieval Augmented Generation Service in FastAPI"
+authors = ["ChristopherGS"]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+uvicorn = "~0.23.2"
+websockets = "11.0.3"
+fastapi = "~0.68.0"
+python-multipart = "~0.0.5"
+pydantic = {extras = ["email"], version = "~1.8.1"}
+tenacity = "^8.0.1"
+greenlet = "^1.1.2"
+
+[tool.poetry.group.dev]
+optional = true
+
+[tool.poetry.group.dev.dependencies]
+flake8 = "6.1.0"
+black = "23.9.1"
+flake8-pyproject = "1.2.3"
+pre-commit = "3.4.0"
+
+
+[tool.flake8]
+max-line-length = 100
+exclude = ['.git','__pycache__','__init__.py','.mypy_cache','.pytest_cache', '.venv']
+
+[tool.black]
+line-length = 100
+target-version = ['py310']
