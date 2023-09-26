@@ -1,17 +1,22 @@
-import pathlib
-
-from pydantic import AnyHttpUrl, BaseSettings, validator
+from pydantic import AnyHttpUrl, validator
+from pydantic_settings import BaseSettings, SettingsConfigDict
 from typing import List, Union
 
 
-# Project Directories
-ROOT = pathlib.Path(__file__).resolve().parent.parent
-
-
-# This is taken from
+# Following is taken from:
 # https://github.com/ChristopherGS/ultimate-fastapi-tutorial/tree/main/part-08-structure-and-versioning
 # Left here for future reference if needed
 class Settings(BaseSettings):
+    model_config = SettingsConfigDict(
+        env_file="./env/.env", env_file_encoding="utf-8", case_sensitive=True
+    )
+
+    CHROMADB_HOST: str
+    CHROMADB_PORT: int
+    CHROMADB_USER: str
+    CHROMADB_PASSWORD: str
+    S3_BUCKET_DOCUMENTS: str
+
     # BACKEND_CORS_ORIGINS is a JSON-formatted list of origins
     # e.g: '["http://localhost", "http://localhost:4200", "http://localhost:3000", \
     # "http://localhost:8080", "http://local.dockertoolbox.tiangolo.com"]'
@@ -24,9 +29,6 @@ class Settings(BaseSettings):
         elif isinstance(v, (list, str)):
             return v
         raise ValueError(v)
-
-    class Config:
-        case_sensitive = True
 
 
 settings = Settings()

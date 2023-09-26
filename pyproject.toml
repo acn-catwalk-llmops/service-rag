@@ -8,9 +8,10 @@ authors = ["ChristopherGS"]
 python = "^3.10"
 uvicorn = "~0.23.2"
 websockets = "11.0.3"
-fastapi = "~0.68.0"
+fastapi = "~0.103.1"
 python-multipart = "~0.0.5"
-pydantic = {extras = ["email"], version = "~1.8.1"}
+pydantic = {extras = ["email"], version = "~2.4.0"}
+pydantic-settings = "2.0.3"
 tenacity = "^8.0.1"
 greenlet = "^1.1.2"
 

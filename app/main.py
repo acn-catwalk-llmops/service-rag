@@ -2,7 +2,7 @@ from fastapi import FastAPI
 
 from app.api.api import router
 
-# from app.core.config import settings
+from app.core.config import settings
 
 app = FastAPI(title="RAG backend service")
 
@@ -14,6 +14,7 @@ def startup_event():
     """
     Load all the necessary models and data once the server starts.
     """
+    print(settings.CHROMADB_HOST)
     # app.directory = '/app/content/'
     # app.documents = load_docs(app.directory)
     # app.docs = split_docs(app.documents)
