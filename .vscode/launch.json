@@ -11,10 +11,12 @@
             "module": "uvicorn",
             "args": [
                 "app.main:app",
-                "--reload"
+                "--reload",
+                "--port",
+                "8000"
             ],
             "jinja": true,
-            "justMyCode": true,
+            "justMyCode": false,
             "envFile": "${workspaceFolder}/env/.env"
         }
     ]

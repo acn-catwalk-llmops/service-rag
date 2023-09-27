@@ -13,9 +13,17 @@ class Settings(BaseSettings):
 
     CHROMADB_HOST: str
     CHROMADB_PORT: int
-    CHROMADB_USER: str
-    CHROMADB_PASSWORD: str
+    CHROMADB_USER: str = ""
+    CHROMADB_PASSWORD: str = ""
+
+    AWS_REGION: str = "eu-central-1"
+    AWS_ACCES_KEY_ID: str
+    AWS_SECRET_ACCESS_KEY: str
     S3_BUCKET_DOCUMENTS: str
+
+    OPENAI_API_KEY: str
+
+    TRANSFORMERS_OFFLINE: int = 1
 
     # BACKEND_CORS_ORIGINS is a JSON-formatted list of origins
     # e.g: '["http://localhost", "http://localhost:4200", "http://localhost:3000", \
