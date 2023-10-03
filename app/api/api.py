@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, Response, status
-from app.rag.rag import RAGService, create_rag_service
 
+from app.rag.rag import RAGService, create_rag_service
 from app.schemas.query import QueryBase, QueryResponse
 
 router = APIRouter()

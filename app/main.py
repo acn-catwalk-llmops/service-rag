@@ -1,7 +1,6 @@
 from fastapi import Depends, FastAPI
 
 from app.api.api import router
-
 from app.rag.rag import RAGService, create_rag_service
 
 app = FastAPI(title="RAG backend service")
