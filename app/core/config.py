@@ -1,14 +1,11 @@
-from pydantic_settings import BaseSettings, SettingsConfigDict
+from pydantic_settings import BaseSettings
+from pathlib import Path
 
 
 # Following is taken from:
 # https://github.com/ChristopherGS/ultimate-fastapi-tutorial/tree/main/part-08-structure-and-versioning
 # Left here for future reference if needed
 class Settings(BaseSettings):
-    model_config = SettingsConfigDict(
-        env_file="./env/.env", env_file_encoding="utf-8", case_sensitive=True
-    )
-
     VECTORSTORE_HOST: str
     VECTORSTORE_PORT: int
     VECTORSTORE_USER: str | None = None
@@ -20,10 +17,13 @@ class Settings(BaseSettings):
     AWS_SECRET_ACCESS_KEY: str
     S3_BUCKET_DOCUMENTS: str
 
-    OPENAI_APIKEY: str
     OPENAI_API_KEY: str
 
-    TRANSFORMERS_OFFLINE: int = 1
 
-
-settings = Settings()
+PATH_TO_ENVFILE = "./env/.env"
+envfile_exists = Path(PATH_TO_ENVFILE).is_file()
+settings = Settings(
+    _env_file=PATH_TO_ENVFILE if envfile_exists else None,
+    _env_file_encoding="utf8" if envfile_exists else None,
+    _case_sensitive=True,
+)

@@ -40,7 +40,7 @@ class LangChainRAGService(RAGService):
         self.vectorstore_client = vectorstore_client
         self.langchain_vectorstore: VectorStore = langchain_vectorstore
         self.langchain_qa_chain: RetrievalQAWithSourcesChain = langchain_qa_chain
-        self.SCHEMA_NAME = vectorstore_schema_name
+        self.schema_name = vectorstore_schema_name
 
     def load_documents(self) -> bool:
         self._reset_schema()
@@ -50,7 +50,7 @@ class LangChainRAGService(RAGService):
 
     def _reset_schema(self):
         doc_schema = {
-            "class": self.SCHEMA_NAME,
+            "class": self.schema_name,
             "vectorizer": "text2vec-openai",
             "vectorIndexConfig": {
                 "distance": "cosine",
@@ -62,11 +62,12 @@ class LangChainRAGService(RAGService):
         }
 
         self.vectorstore_client.schema.delete_class(
-            self.SCHEMA_NAME
+            self.schema_name
         )  # TODO thasan catch exception if not existent
         self.vectorstore_client.schema.create_class(doc_schema)
 
     def _load_documents(self):
+        # TODO thasan abstract
         loader = S3DirectoryLoader(
             bucket=settings.S3_BUCKET_DOCUMENTS,
             prefix="",
@@ -108,13 +109,13 @@ class LangChainRAGService(RAGService):
 
 def create_rag_service():
     WEAVIATE_SCHEMA_NAME = "Document"
-    embedding_model = OpenAIEmbeddings(openai_api_key=settings.OPENAI_APIKEY)
+    embedding_model = OpenAIEmbeddings(openai_api_key=settings.OPENAI_API_KEY)
     # note that we also specify 'text2vec-openai' in the Weaviate Document schema.
     # Consequences of diverging values are unknown.
     # TODO thasan activate weaviate authentication
     weaviate_client = weaviate.Client(
         url=f"http://{settings.VECTORSTORE_HOST}:{settings.VECTORSTORE_PORT}",
-        additional_headers={"X-OpenAI-Api-Key": settings.OPENAI_APIKEY},
+        additional_headers={"X-OpenAI-Api-Key": settings.OPENAI_API_KEY},
     )
     langchain_vectorstore = Weaviate(
         weaviate_client,

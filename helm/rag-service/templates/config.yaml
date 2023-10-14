@@ -1,0 +1,40 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Chart.Name }}-config
+  namespace: {{ .Release.Namespace }}
+data:
+  vectorstore_host: {{ required "appConfig.vectorstore required" .Values.appConfig.vectorstore.host}}
+  vectorstore_port: "{{ required "appConfig.vectorstore required" .Values.appConfig.vectorstore.port}}"
+  aws_document_bucket: {{ required "appConfig.aws required" .Values.appConfig.aws.documentBucketName}}
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ .Chart.Name }}-secret
+  namespace: {{ .Release.Namespace }}
+type: Opaque
+stringData:
+  aws_key_id: {{ required "appConfig.aws required" .Values.appConfig.aws.keyId}}
+  aws_secret_key: {{ required "appConfig.aws required" .Values.appConfig.aws.secretKey}}
+  openai_api_key: {{ required "appConfig.openai required" .Values.appConfig.openaiApiKey}}
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: ghcr-image-pull-secret
+  namespace: {{ .Release.Namespace }}
+type: Opaque
+stringData:
+  aws_key_id: {{ required "appConfig.aws required" .Values.appConfig.aws.keyId}}
+  aws_secret_key: {{ required "appConfig.aws required" .Values.appConfig.aws.secretKey}}
+  openai_api_key: {{ required "appConfig.openai required" .Values.appConfig.openaiApiKey}}
+---
+kind: Secret
+type: kubernetes.io/dockerconfigjson
+apiVersion: v1
+metadata:
+  name: dockerconfigjson-github-com
+  namespace: {{ .Release.Namespace }}
+data:
+  .dockerconfigjson: {{ template "imagePullSecret" . }}

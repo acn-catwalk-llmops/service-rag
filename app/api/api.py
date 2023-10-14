@@ -6,6 +6,14 @@ from app.schemas.query import QueryBase, QueryResponse
 router = APIRouter()
 
 
+@router.get("/healthz", status_code=200)
+def stat(response: Response):
+    """
+    Health check endpoint
+    """
+    response.status_code = status.HTTP_200_OK
+
+
 @router.post("/query", status_code=201, response_model=QueryResponse)
 def query(query: QueryBase, rag_service: RAGService = Depends(create_rag_service)):
     """
