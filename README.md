@@ -10,7 +10,9 @@ This is a RAG Service in FastAPI.
   - poetry install --with dev
   - poetry run ./run.sh
 - Docker:
-  - docker build --progress=plain --no-cache --platform linux/amd64 -t ghcr.io/acn-catwalk-llmops/rag-fastapi:0.0.1 .
+  - build:
+    - docker build --progress=plain --no-cache --platform linux/amd64 -t ghcr.io/acn-catwalk-llmops/rag-fastapi:0.0.1 .
+    - docker build --platform linux/amd64 -t ghcr.io/acn-catwalk-llmops/rag-fastapi:0.0.1 .
   - docker run -p 8000:8000 rag-fastapi
   - login to GitHub container registry
     - export CR_TOKEN={YOUR_GH_TOKEN}
@@ -28,3 +30,7 @@ This is a RAG Service in FastAPI.
 
 - test document loader
 - evtl andere vector datenbank integrieren und probieren zu abstrahieren
+
+## CI
+
+"GitLab Flow" based flow. PRs to main deploy to dev env. later stages can be accounted for by adding new "production/relese" branches and merging main into the newly added branches. release versions are created by humans tagging commits.
