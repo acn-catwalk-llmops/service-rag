@@ -33,6 +33,7 @@ flake8-pyproject = "1.2.3"
 pre-commit = "3.4.0"
 pytest = "*"
 httpx = "*"
+pynacl = "*"
 
 [tool.flake8]
 max-line-length = 100

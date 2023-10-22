@@ -1,0 +1,42 @@
+name: Helm Deploy
+
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+
+# Only trigger, when the build workflow succeeded
+on:
+  workflow_run:
+    workflows: ["Docker"]
+    types:
+      - completed
+
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: dev
+#    permissions:
+#      contents: read
+#      packages: write
+#      # This is used to complete the identity challenge
+#      # with sigstore/fulcio when running outside of PRs.
+#      id-token: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Deploy Helm
+        uses: bitovi/github-actions-deploy-eks-helm@v1.2.7
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+          cluster-name: ${{ secrets.AWS_EKS_CLUSTER_NAME }}
+          config-files: ./helm/rag-service/values.dist.yaml
+          chart-path: helm/rag-service/
+          namespace: default
+          # TODO try and linebreak following line with |
+          # values: appConfig.vectorstore.host=${{ secrets.VECTORSTORE_HOST }},appConfig.vectorstore.port=${{ secrets.VECTORSTORE_PORT }},appConfig.aws.keyId=${{ secrets.AWS_ACCESS_KEY_ID }},appConfig.aws.secretKey=${{ secrets.AWS_SECRET_ACCESS_KEY }},appConfig.aws.documentBucketName=${{ secrets.S3_BUCKET_DOCUMENTS }},imageCredentials.registry=${{ secrets.REGISTRY }},imageCredentials.username=${{ secrets.REGISTRY_USERNAME }},imageCredentials.password=${{ secrets.REGISTRY_PASSWORD }},
+          name: rag-service
