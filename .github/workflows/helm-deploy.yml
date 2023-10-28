@@ -5,13 +5,12 @@ name: Helm Deploy
 # separate terms of service, privacy policy, and support
 # documentation.
 
-# Only trigger, when the build workflow succeeded
 on:
-  workflow_run:
-    workflows: ["Docker"]
-    types:
-      - completed
-  push:
+  # workflow_run:
+  #   workflows: ["Docker"]
+  #   types:
+  #     - completed
+  # push:
     # branches: [ main ]
     # tags: [ 'v*.*.*' ]
   repository_dispatch:
