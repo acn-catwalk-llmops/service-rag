@@ -105,7 +105,7 @@ jobs:
           name: Release ${{ steps.tag_version.outputs.new_tag }}
           body: ${{ steps.tag_version.outputs.changelog }}
       - name: Repository Dispatch
-        uses: peter-evans/repository-dispatch@v1
+        uses: peter-evans/repository-dispatch@v2
         with:
           event-type: build-push-complete
           client-payload: '{"appVersion": "${{ steps.tag_version.outputs.new_tag }}"}'
