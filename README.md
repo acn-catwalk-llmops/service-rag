@@ -29,6 +29,11 @@ The CI/CD depends on GitHub Environments and Environment Secrets. To set it up, 
 - Precommit:
   - pre-commit install
   - pre-commit run --all-files
+- Test:
+  - poetry run pytest .
+  - docker build -t ghcr.io/acn-catwalk-llmops/service-rag:test . --target test
+  - docker run ghcr.io/acn-catwalk-llmops/service-rag:test
+
 - Helm
   - helm install service-rag helm/service-rag
   - helm uninstall service-rag
@@ -39,14 +44,17 @@ The CI/CD depends on GitHub Environments and Environment Secrets. To set it up, 
 
 ## TODOs
 
-- test document loader
-- evtl andere vector datenbank integrieren und probieren zu abstrahieren
+- App
+  - test document loader
+  - evtl andere vector datenbank integrieren und probieren zu abstrahieren
+- CICD
+  - make application ports configurable?
 
 ## CI
 
+"GitLab Flow" based flow. Push/PR to main should deploy to dev env. Each run of the pipeline builds, tests, increases semver patch version and pushes the image. After pushing the image, Helm deployment to EKS takes place. Deployments to other environment can be accounted for by adding new "production/relese" branches and merging main into the newly added branches.
+
 ### Github Actions Setup
 
-- add AWS secrets AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY to repository secret ("Settings" -> "Secrets and Variables" on repository page)
 -
-
-"GitLab Flow" based flow. PRs to main deploy to dev env. later stages can be accounted for by adding new "production/relese" branches and merging main into the newly added branches. release versions are created by humans tagging commits.
+-

@@ -10,10 +10,9 @@ on:
     branches: [ main ]
 
 env:
-  # Use docker.io for Docker Hub if empty
   REGISTRY: ghcr.io
   # github.repository as <account>/<repo>
-  IMAGE_NAME: ${{ github.repository }}
+  TEST_IMAGE_QUALIFIER: ghcr.io/${{ github.repository }}:test
 
 
 jobs:
@@ -21,11 +20,37 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      packages: write
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
-      # test step
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@f95db51fddba0c2d1ec667646a06c2ce06100226 # v3.0.0
+
+      # Login against a Docker registry except on PR
+      # https://github.com/docker/login-action
+      - name: Log into registry ${{ env.REGISTRY }}
+        # if: github.event_name != 'pull_request'
+        uses: docker/login-action@343f7c4344506bcbf9b4de18042ae17996df046d # v3.0.0
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build test target
+        id: build-test
+        uses: docker/build-push-action@0565240e2d4ab88bba5387d719585280857ece09 # v5.0.0
+        with:
+          context: .
+          target: test
+          push: false
+          load: true
+          tags: ${{ env.TEST_IMAGE_QUALIFIER }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+      - name: Test
+        run: |
+          docker run --rm ${{ env.TEST_IMAGE_QUALIFIER }}
       - name: Bump version and push tag
         id: tag_version
         uses: mathieudutour/github-tag-action@v6.1

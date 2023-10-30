@@ -1,11 +1,13 @@
-from pydantic_settings import BaseSettings
 from pathlib import Path
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 # Following is taken from:
 # https://github.com/ChristopherGS/ultimate-fastapi-tutorial/tree/main/part-08-structure-and-versioning
 # Left here for future reference if needed
 class Settings(BaseSettings):
+    model_config = SettingsConfigDict(extra="ignore")
+
     VECTORSTORE_HOST: str
     VECTORSTORE_PORT: int
     VECTORSTORE_USER: str | None = None

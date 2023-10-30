@@ -31,7 +31,8 @@ FROM base as test
 
 RUN --mount=type=cache,target=/root/.cache poetry install --with dev
 COPY --chown=user:user ./app /home/user/app
-RUN mkdir /home/user/.mypy_cache && chown -R user:user /home/user/.mypy_cache
+COPY --chown=user:user ./env/.env.dist /home/user/env/.env
+CMD [ "pytest", "." ]
 
 # Default target.
 FROM dev
