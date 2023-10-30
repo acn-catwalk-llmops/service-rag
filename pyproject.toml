@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "rag-service"
+name = "service-rag"
 version = "0.0.1"
 description = "A Retrieval Augmented Generation Service in FastAPI"
 authors = ["tomislav.hasan"]

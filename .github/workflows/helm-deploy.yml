@@ -31,8 +31,8 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
           cluster-name: ${{ secrets.AWS_EKS_CLUSTER_NAME }}
-          config-files: ./helm/rag-service/values.dist.yaml
-          chart-path: helm/rag-service/
+          config-files: ./helm/service-rag/values.dist.yaml
+          chart-path: helm/service-rag/
           namespace: default
-          values: image.repository=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }},image.tag=${{ github.event.client_payload.app_version }},appConfig.vectorstore.host=${{ secrets.VECTORSTORE_HOST }},appConfig.vectorstore.port=${{ secrets.VECTORSTORE_PORT }},appConfig.openaiApiKey=${{ secrets.OPENAI_API_KEY }},appConfig.aws.keyId=${{ secrets.AWS_ACCESS_KEY_ID }},appConfig.aws.secretKey=${{ secrets.AWS_SECRET_ACCESS_KEY }},appConfig.aws.documentBucketName=${{ secrets.S3_BUCKET_DOCUMENTS }},imageCredentials.registry=${{ secrets.REGISTRY }},imageCredentials.username=${{ secrets.REGISTRY_USERNAME }},imageCredentials.password=${{ secrets.REGISTRY_TOKEN }}
-          name: rag-service
+          values: image.repository=${{ secrets.REGISTRY }}/${{ github.repository }},image.tag=${{ github.event.client_payload.app_version }},appConfig.vectorstore.host=${{ secrets.VECTORSTORE_HOST }},appConfig.vectorstore.port=${{ secrets.VECTORSTORE_PORT }},appConfig.openaiApiKey=${{ secrets.OPENAI_API_KEY }},appConfig.aws.keyId=${{ secrets.AWS_ACCESS_KEY_ID }},appConfig.aws.secretKey=${{ secrets.AWS_SECRET_ACCESS_KEY }},appConfig.aws.documentBucketName=${{ secrets.S3_BUCKET_DOCUMENTS }},imageCredentials.registry=${{ secrets.REGISTRY }},imageCredentials.username=${{ secrets.REGISTRY_USERNAME }},imageCredentials.password=${{ secrets.REGISTRY_TOKEN }}
+          name: service-rag

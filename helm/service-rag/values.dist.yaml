@@ -1,6 +1,6 @@
 # Create a values.YOUR_ENV.yaml (e.g. values.dev.yaml), according to the environment you want to deploy to
 
-# Default values for rag-service.
+# Default values for service-rag.
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
