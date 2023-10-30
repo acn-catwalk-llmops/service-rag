@@ -30,9 +30,9 @@ The CI/CD depends on GitHub Environments and Environment Secrets. To set it up, 
   - pre-commit install
   - pre-commit run --all-files
 - Helm
-  - helm install rag-service helm/rag-service
-  - helm uninstall rag-service
-  - helm template helm/rag-service
+  - helm install service-rag helm/service-rag
+  - helm uninstall service-rag
+  - helm template helm/service-rag
 - Git tag and push tag
   - git tag v1.2.3
   - git push origin v1.2.3
