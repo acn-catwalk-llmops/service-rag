@@ -14,7 +14,7 @@ on:
     # branches: [ main ]
     # tags: [ 'v*.*.*' ]
   repository_dispatch:
-    types: [build-push-complete]
+    types: [build-push-completed]
 
 
 jobs:
@@ -24,12 +24,6 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
-      - name: Get next version
-        uses: reecetech/version-increment@2023.9.3
-        id: version
-        with:
-          scheme: semver
-          increment: patch
       - name: Deploy Helm
         uses: bitovi/github-actions-deploy-eks-helm@v1.2.7
         with:
@@ -40,16 +34,5 @@ jobs:
           config-files: ./helm/rag-service/values.dist.yaml
           chart-path: helm/rag-service/
           namespace: default
-          # TODO try and linebreak following line with |
-          values: >
-            image.tag=${{ github.event.client_payload.appVersion }},
-            appConfig.vectorstore.host=${{ secrets.VECTORSTORE_HOST }},
-            appConfig.vectorstore.port=${{ secrets.VECTORSTORE_PORT }},
-            appConfig.openaiApiKey=${{ secrets.OPENAI_API_KEY }},
-            appConfig.aws.keyId=${{ secrets.AWS_ACCESS_KEY_ID }},
-            appConfig.aws.secretKey=${{ secrets.AWS_SECRET_ACCESS_KEY }},
-            appConfig.aws.documentBucketName=${{ secrets.S3_BUCKET_DOCUMENTS }},
-            imageCredentials.registry=${{ secrets.REGISTRY }},
-            imageCredentials.username=${{ secrets.REGISTRY_USERNAME }},
-            imageCredentials.password=${{ secrets.REGISTRY_TOKEN }}
+          values: image.repository=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }},image.tag=${{ github.event.client_payload.app_version }},appConfig.vectorstore.host=${{ secrets.VECTORSTORE_HOST }},appConfig.vectorstore.port=${{ secrets.VECTORSTORE_PORT }},appConfig.openaiApiKey=${{ secrets.OPENAI_API_KEY }},appConfig.aws.keyId=${{ secrets.AWS_ACCESS_KEY_ID }},appConfig.aws.secretKey=${{ secrets.AWS_SECRET_ACCESS_KEY }},appConfig.aws.documentBucketName=${{ secrets.S3_BUCKET_DOCUMENTS }},imageCredentials.registry=${{ secrets.REGISTRY }},imageCredentials.username=${{ secrets.REGISTRY_USERNAME }},imageCredentials.password=${{ secrets.REGISTRY_TOKEN }}
           name: rag-service

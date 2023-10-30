@@ -7,10 +7,11 @@ from dotenv import load_dotenv
 
 ENV_FILE_PATH = "./env/.env.dev"
 
+# for now only requiring REGISTRY_TOKEN from env file
 load_dotenv(ENV_FILE_PATH)
 
 GITHUB_TOKEN = os.environ["REGISTRY_TOKEN"]
-REPOSITORY_ID = "acn-catwalk-llmops/rag-backend"
+REPOSITORY_ID = "acn-catwalk-llmops/service-rag"
 ENVIRONMENT_NAME = "dev"
 
 BASE_URL = f"https://api.github.com/repos/{REPOSITORY_ID}"

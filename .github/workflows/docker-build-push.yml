@@ -6,12 +6,14 @@ name: Docker Build Publish
 # documentation. Cool.
 
 on:
-  push:
+  # push:
     # branches: [ main ]
     # Publish semver tags as releases.
-    tags: [ 'v*.*.*' ]
+    # tags: [ 'v*.*.*' ]
   # pull_request:
   #   branches: [ main ]
+  repository_dispatch:
+    types: [semver-increment-created]
 
 env:
   # Use docker.io for Docker Hub if empty
@@ -41,12 +43,6 @@ jobs:
         uses: sigstore/cosign-installer@6e04d228eb30da1757ee4e1dd75a0ec73a653e06 #v3.1.1
         with:
           cosign-release: 'v2.1.1'
-      - name: Bump version and push tag
-        id: tag_version
-        uses: mathieudutour/github-tag-action@v6.1
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-
       # Set up BuildKit Docker container builder to be able to build
       # multi-platform images and export cache
       # https://github.com/docker/setup-buildx-action
@@ -98,14 +94,8 @@ jobs:
         # This step uses the identity token to provision an ephemeral certificate
         # against the sigstore community Fulcio instance.
         run: echo "${TAGS}" | xargs -I {} cosign sign --yes {}@${DIGEST}
-      - name: Create a GitHub release
-        uses: ncipollo/release-action@v1
-        with:
-          tag: ${{ steps.tag_version.outputs.new_tag }}
-          name: Release ${{ steps.tag_version.outputs.new_tag }}
-          body: ${{ steps.tag_version.outputs.changelog }}
       - name: Repository Dispatch
         uses: peter-evans/repository-dispatch@v2
         with:
-          event-type: build-push-complete
-          client-payload: '{"appVersion": "${{ steps.tag_version.outputs.new_tag }}"}'
+          event-type: build-push-completed
+          client-payload: '{"app_version": "${{ github.event.client_payload.new_tag }}"}'
