@@ -3,8 +3,13 @@ import os
 import json
 import requests
 from nacl import encoding, public
+from dotenv import load_dotenv
 
-GITHUB_TOKEN = os.environ["GITHUB_TOKEN"]
+ENV_FILE_PATH = "./env/.env.dev"
+
+load_dotenv(ENV_FILE_PATH)
+
+GITHUB_TOKEN = os.environ["REGISTRY_TOKEN"]
 REPOSITORY_ID = "acn-catwalk-llmops/rag-backend"
 ENVIRONMENT_NAME = "dev"
 
@@ -43,9 +48,10 @@ def create_environment():
         print(response.text)
 
 
+# Loading all values as secrets, because why not.
 def create_environment_secrets_from_env_file(public_key, public_key_id):
     secrets = {}
-    with open("./env/.env.dev", "r") as env_file:
+    with open(ENV_FILE_PATH, "r") as env_file:
         for line in env_file:
             line = line.strip()
             if not line or line.startswith("#"):

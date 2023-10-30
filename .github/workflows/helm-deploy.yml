@@ -41,5 +41,15 @@ jobs:
           chart-path: helm/rag-service/
           namespace: default
           # TODO try and linebreak following line with |
-          values: image.tag=${{ github.event.client_payload.appVersion }},appConfig.vectorstore.host=${{ secrets.VECTORSTORE_HOST }},appConfig.vectorstore.port=${{ secrets.VECTORSTORE_PORT }},appConfig.openaiApiKey=${{ secrets.OPENAI_API_KEY }},appConfig.aws.keyId=${{ secrets.AWS_ACCESS_KEY_ID }},appConfig.aws.secretKey=${{ secrets.AWS_SECRET_ACCESS_KEY }},appConfig.aws.documentBucketName=${{ secrets.S3_BUCKET_DOCUMENTS }},imageCredentials.registry=${{ secrets.REGISTRY }},imageCredentials.username=${{ secrets.REGISTRY_USERNAME }},imageCredentials.password=${{ secrets.REGISTRY_PASSWORD }},
+          values: >
+            image.tag=${{ github.event.client_payload.appVersion }},
+            appConfig.vectorstore.host=${{ secrets.VECTORSTORE_HOST }},
+            appConfig.vectorstore.port=${{ secrets.VECTORSTORE_PORT }},
+            appConfig.openaiApiKey=${{ secrets.OPENAI_API_KEY }},
+            appConfig.aws.keyId=${{ secrets.AWS_ACCESS_KEY_ID }},
+            appConfig.aws.secretKey=${{ secrets.AWS_SECRET_ACCESS_KEY }},
+            appConfig.aws.documentBucketName=${{ secrets.S3_BUCKET_DOCUMENTS }},
+            imageCredentials.registry=${{ secrets.REGISTRY }},
+            imageCredentials.username=${{ secrets.REGISTRY_USERNAME }},
+            imageCredentials.password=${{ secrets.REGISTRY_TOKEN }}
           name: rag-service
