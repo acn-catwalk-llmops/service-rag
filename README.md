@@ -48,13 +48,19 @@ The CI/CD depends on GitHub Environments and Environment Secrets. To set it up, 
   - test document loader
   - evtl andere vector datenbank integrieren und probieren zu abstrahieren
 - CICD
-  - make application ports configurable?
+  - FIX poetry caching during build!!!
+  - configure pipeline runs for testing on feature branches
 
 ## CI
 
 "GitLab Flow" based flow. Push/PR to main should deploy to dev env. Each run of the pipeline builds, tests, increases semver patch version and pushes the image. After pushing the image, Helm deployment to EKS takes place. Deployments to other environment can be accounted for by adding new "production/relese" branches and merging main into the newly added branches.
 
-### Github Actions Setup
+### CI/CD Setup
 
--
--
+In `.github/workflows`, there are GitHub Action workflows that build and test the app on push to `main`. Upon successfull tests, the CI/CD increases the semver of the app and triggers a build and push to the `ghcr.io` registry. After this, the app is deployed with Helm to the EKS cluster. For the GitHub CI/CD to run, a deploment environment and according secrets/variables have to be created.
+
+- Create your own `.env.dev` file from `.env.dist`
+- run `poetry run python .github/create_github_env.py`
+- Push changes to the repo and watch the pipeline run. Good luck.
+
+Hint: poetry install caching not working properly, so pipeline runs are quite slow currently
