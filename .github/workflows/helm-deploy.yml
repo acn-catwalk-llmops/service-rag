@@ -30,6 +30,7 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
+          cluster-role-arn: ${{ secrets.AWS_EKS_ROLE_ARN }}
           cluster-name: ${{ secrets.AWS_EKS_CLUSTER_NAME }}
           config-files: ./helm/service-rag/values.dist.yaml
           chart-path: helm/service-rag/
