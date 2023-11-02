@@ -4,6 +4,8 @@ This is a RAG Service in FastAPI.
 
 ## Notes
 
+A collection of useful commands:
+
 - For VS Code to pick up poetry environment:
   - poetry config virtualenvs.in-project true
 - Poetry:
