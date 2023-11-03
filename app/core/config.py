@@ -15,8 +15,9 @@ class Settings(BaseSettings):
     VECTORSTORE_PASSWORD: str | None = None
 
     AWS_REGION: str = "eu-central-1"
-    AWS_ACCES_KEY_ID: str
+    AWS_ACCESS_KEY_ID: str
     AWS_SECRET_ACCESS_KEY: str
+    AWS_ROLE_ARN_TO_ASSUME: str
     S3_BUCKET_DOCUMENTS: str
 
     OPENAI_API_KEY: str

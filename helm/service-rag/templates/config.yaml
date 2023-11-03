@@ -4,9 +4,10 @@ metadata:
   name: {{ .Chart.Name }}-config
   namespace: {{ .Release.Namespace }}
 data:
-  vectorstore_host: {{ required "appConfig.vectorstore required" .Values.appConfig.vectorstore.host}}
-  vectorstore_port: "{{ required "appConfig.vectorstore required" .Values.appConfig.vectorstore.port}}"
-  aws_document_bucket: {{ required "appConfig.aws required" .Values.appConfig.aws.documentBucketName}}
+  VECTORSTORE_HOST: {{ required "appConfig.vectorstore required" .Values.appConfig.vectorstore.host}}
+  # beware that integers need to be quoted, otherwise k8s cannot create configmap -.-
+  VECTORSTORE_PORT: "{{ required "appConfig.vectorstore required" .Values.appConfig.vectorstore.port}}"
+  S3_BUCKET_DOCUMENTS: {{ required "appConfig.aws.documentBucketName required" .Values.appConfig.aws.documentBucketName}}
 ---
 apiVersion: v1
 kind: Secret
@@ -15,20 +16,10 @@ metadata:
   namespace: {{ .Release.Namespace }}
 type: Opaque
 stringData:
-  aws_key_id: {{ required "appConfig.aws required" .Values.appConfig.aws.keyId}}
-  aws_secret_key: {{ required "appConfig.aws required" .Values.appConfig.aws.secretKey}}
-  openai_api_key: {{ required "appConfig.openai required" .Values.appConfig.openaiApiKey}}
----
-apiVersion: v1
-kind: Secret
-metadata:
-  name: ghcr-image-pull-secret
-  namespace: {{ .Release.Namespace }}
-type: Opaque
-stringData:
-  aws_key_id: {{ required "appConfig.aws required" .Values.appConfig.aws.keyId}}
-  aws_secret_key: {{ required "appConfig.aws required" .Values.appConfig.aws.secretKey}}
-  openai_api_key: {{ required "appConfig.openai required" .Values.appConfig.openaiApiKey}}
+  AWS_ACCESS_KEY_ID: {{ required "appConfig.aws.keyId required" .Values.appConfig.aws.keyId}}
+  AWS_SECRET_ACCESS_KEY: {{ required "appConfig.aws.secretKey required" .Values.appConfig.aws.secretKey}}
+  AWS_ROLE_ARN_TO_ASSUME: {{ required "appConfig.aws.roleToAssume required" .Values.appConfig.aws.roleToAssume}}
+  OPENAI_API_KEY: {{ required "appConfig.openaiApiKey required" .Values.appConfig.openaiApiKey}}
 ---
 kind: Secret
 type: kubernetes.io/dockerconfigjson

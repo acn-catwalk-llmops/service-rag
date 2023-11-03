@@ -8,6 +8,7 @@ from langchain.embeddings import OpenAIEmbeddings
 from langchain.llms import OpenAI
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.vectorstores import VectorStore, Weaviate
+import boto3
 
 from app.core.config import settings
 from app.schemas.query import DocumentModel, QueryBase, QueryResponse
@@ -43,7 +44,7 @@ class LangChainRAGService(RAGService):
         self.schema_name = vectorstore_schema_name
 
     def load_documents(self) -> bool:
-        self._reset_schema()
+        # self._reset_schema()
         chunked_docs = self._load_documents()
         self.langchain_vectorstore.add_documents(chunked_docs)
         return True
@@ -67,13 +68,22 @@ class LangChainRAGService(RAGService):
         self.vectorstore_client.schema.create_class(doc_schema)
 
     def _load_documents(self):
-        # TODO thasan abstract
+        # TODO thasan abstract document loading
+        session = boto3.Session(
+            aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
+            aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
+        )
+        sts = session.client("sts")
+        response = sts.assume_role(
+            RoleArn=settings.AWS_ROLE_ARN_TO_ASSUME, RoleSessionName="service-rag-session"
+        )
         loader = S3DirectoryLoader(
             bucket=settings.S3_BUCKET_DOCUMENTS,
             prefix="",
             region_name=settings.AWS_REGION,
-            aws_access_key_id=settings.AWS_ACCES_KEY_ID,
-            aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
+            aws_access_key_id=response["Credentials"]["AccessKeyId"],
+            aws_secret_access_key=response["Credentials"]["SecretAccessKey"],
+            aws_session_token=response["Credentials"]["SessionToken"],
         )
         docs = loader.load()
 

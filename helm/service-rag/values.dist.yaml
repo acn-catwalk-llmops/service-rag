@@ -93,6 +93,7 @@ appConfig:
   aws:
     keyId: null
     secretKey: null
+    roleToAssume: null
     documentBucketName: null
   openaiApiKey: null
 
@@ -100,6 +101,3 @@ imageCredentials:
   registry: ghcr.io
   username: null
   password: null
-
-imagePullSecrets:
-  - name: dockerconfigjson-github-com # get rid of this

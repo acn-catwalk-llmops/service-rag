@@ -31,37 +31,11 @@ spec:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
-          env:
-            - name: VECTORSTORE_HOST
-              valueFrom:
-                configMapKeyRef:
-                  name: {{  .Chart.Name }}-config
-                  key: vectorstore_host
-            - name: VECTORSTORE_PORT
-              valueFrom:
-                configMapKeyRef:
-                  name: {{  .Chart.Name }}-config
-                  key: vectorstore_port
-            - name: S3_BUCKET_DOCUMENTS
-              valueFrom:
-                configMapKeyRef:
-                  name: {{  .Chart.Name }}-config
-                  key: aws_document_bucket
-            - name: AWS_ACCES_KEY_ID
-              valueFrom:
-                secretKeyRef:
-                  name: {{  .Chart.Name }}-secret
-                  key: aws_key_id
-            - name: AWS_SECRET_ACCESS_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: {{  .Chart.Name }}-secret
-                  key: aws_secret_key
-            - name: OPENAI_API_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: {{  .Chart.Name }}-secret
-                  key: openai_api_key
+          envFrom:
+            - configMapRef:
+                name: {{  .Chart.Name }}-config
+            - secretRef:
+                name: {{  .Chart.Name }}-secret
           ports:
             - name: http
               containerPort: {{ .Values.service.port }}
