@@ -1,11 +1,23 @@
 from base64 import b64encode
 import os
 import json
+import argparse
 import requests
 from nacl import encoding, public
 from dotenv import load_dotenv
 
-ENV_FILE_PATH = "./env/.env.dev"
+
+parser = argparse.ArgumentParser()
+parser.add_argument(
+    "envfile",
+    nargs="?",
+    help="The .env file to be used as source to create GitHub environment",
+    type=str,
+    default="./env/.env",
+)
+args = parser.parse_args()
+
+ENV_FILE_PATH = args.envfile
 
 # for now only requiring REGISTRY_TOKEN from env file
 load_dotenv(ENV_FILE_PATH)

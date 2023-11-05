@@ -44,7 +44,7 @@ class LangChainRAGService(RAGService):
         self.schema_name = vectorstore_schema_name
 
     def load_documents(self) -> bool:
-        # self._reset_schema()
+        self._reset_schema()
         chunked_docs = self._load_documents()
         self.langchain_vectorstore.add_documents(chunked_docs)
         return True
@@ -69,27 +69,45 @@ class LangChainRAGService(RAGService):
 
     def _load_documents(self):
         # TODO thasan abstract document loading
-        session = boto3.Session(
-            aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
-            aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
-        )
-        sts = session.client("sts")
-        response = sts.assume_role(
-            RoleArn=settings.AWS_ROLE_ARN_TO_ASSUME, RoleSessionName="service-rag-session"
-        )
+
+        aws_access_key_id = settings.AWS_ACCESS_KEY_ID
+        aws_secret_access_key = settings.AWS_SECRET_ACCESS_KEY
+        aws_session_token = None
+
+        if settings.AWS_ROLE_ARN_TO_ASSUME:
+            aws_access_key_id, aws_secret_access_key, aws_session_token = self._assume_role(
+                aws_access_key_id, aws_secret_access_key, settings.AWS_ROLE_ARN_TO_ASSUME
+            )
+
         loader = S3DirectoryLoader(
             bucket=settings.S3_BUCKET_DOCUMENTS,
             prefix="",
             region_name=settings.AWS_REGION,
-            aws_access_key_id=response["Credentials"]["AccessKeyId"],
-            aws_secret_access_key=response["Credentials"]["SecretAccessKey"],
-            aws_session_token=response["Credentials"]["SessionToken"],
+            aws_access_key_id=aws_access_key_id,
+            aws_secret_access_key=aws_secret_access_key,
+            aws_session_token=aws_session_token,
         )
         docs = loader.load()
 
         text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=200)
         chunked_docs = text_splitter.split_documents(docs)
         return chunked_docs
+
+    def _assume_role(self, aws_access_key_id, aws_secret_access_key, role_arn_to_assume):
+        session = boto3.Session(
+            aws_access_key_id=aws_access_key_id,
+            aws_secret_access_key=aws_secret_access_key,
+        )
+        sts = session.client("sts")
+        response = sts.assume_role(
+            RoleArn=role_arn_to_assume, RoleSessionName="service-rag-session"
+        )
+
+        aws_access_key_id = response["Credentials"]["AccessKeyId"]
+        aws_secret_access_key = response["Credentials"]["SecretAccessKey"]
+        aws_session_token = response["Credentials"]["SessionToken"]
+
+        return aws_access_key_id, aws_secret_access_key, aws_session_token
 
     def query(self, query: QueryBase) -> Optional[QueryResponse]:
         # response = self.langchain_qa_chain({"query": query.query})  # this is for RetrievalQA
@@ -122,7 +140,6 @@ def create_rag_service():
     embedding_model = OpenAIEmbeddings(openai_api_key=settings.OPENAI_API_KEY)
     # note that we also specify 'text2vec-openai' in the Weaviate Document schema.
     # Consequences of diverging values are unknown.
-    # TODO thasan activate weaviate authentication
     weaviate_client = weaviate.Client(
         url=f"http://{settings.VECTORSTORE_HOST}:{settings.VECTORSTORE_PORT}",
         additional_headers={"X-OpenAI-Api-Key": settings.OPENAI_API_KEY},
@@ -149,35 +166,3 @@ def create_rag_service():
         langchain_vectorstore=langchain_vectorstore,
         langchain_qa_chain=qa_chain,
     )
-
-
-# def create_rag_service_chroma():
-#     embedding_model = OpenAIEmbeddings()
-#     vectorstore_client = chromadb.HttpClient(
-#         host=settings.VECTORSTORE_HOST,
-#         port=settings.VECTORSTORE_PORT,
-#         settings=Settings(
-#             chroma_client_auth_provider="chromadb.auth.basic.BasicAuthClientProvider",
-#             chroma_client_auth_credentials=f"{settings.VECTORSTORE_USER}:{settings.VECTORSTORE_PASSWORD}",
-#         )
-#         if settings.VECTORSTORE_USER and settings.VECTORSTORE_PORT
-#         else Settings(),
-#     )
-#     langchain_vectorstore = Chroma(
-#         client=vectorstore_client,
-#         collection_name="my_collection",
-#         embedding_function=embedding_model,
-#     )
-
-#     qa_chain = RetrievalQA.from_chain_type(
-#         llm=OpenAI(),
-#         chain_type="stuff",
-#         retriever=langchain_vectorstore.as_retriever(search_kwargs={"k": 1}),
-#         return_source_documents=True,
-#     )
-#     return LangChainRAGService(
-#         embedding_model=embedding_model,
-#         vectorstore_client=vectorstore_client,
-#         vector_store=langchain_vectorstore,
-#         qa_chain=qa_chain,
-#     )

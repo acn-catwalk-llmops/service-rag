@@ -17,12 +17,13 @@ class Settings(BaseSettings):
     AWS_REGION: str = "eu-central-1"
     AWS_ACCESS_KEY_ID: str
     AWS_SECRET_ACCESS_KEY: str
-    AWS_ROLE_ARN_TO_ASSUME: str
+    AWS_ROLE_ARN_TO_ASSUME: str | None = None
     S3_BUCKET_DOCUMENTS: str
 
     OPENAI_API_KEY: str
 
 
+# for local development and test execution only
 PATH_TO_ENVFILE = "./env/.env"
 envfile_exists = Path(PATH_TO_ENVFILE).is_file()
 settings = Settings(
