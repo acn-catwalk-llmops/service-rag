@@ -18,7 +18,7 @@ type: Opaque
 stringData:
   AWS_ACCESS_KEY_ID: {{ required "appConfig.aws.keyId required" .Values.appConfig.aws.keyId}}
   AWS_SECRET_ACCESS_KEY: {{ required "appConfig.aws.secretKey required" .Values.appConfig.aws.secretKey}}
-  AWS_ROLE_ARN_TO_ASSUME: {{ required "appConfig.aws.roleToAssume required" .Values.appConfig.aws.roleToAssume}}
+  AWS_ROLE_ARN_TO_ASSUME: {{ .Values.appConfig.aws.roleToAssume}}
   OPENAI_API_KEY: {{ required "appConfig.openaiApiKey required" .Values.appConfig.openaiApiKey}}
 ---
 kind: Secret
